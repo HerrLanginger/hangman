@@ -21,31 +21,88 @@ typedef struct Word
 void PrintWord(Word *word)
 {
     for (int i = 0; i < word->length; i++)
+    {
+        if (word->revealed[i] == true)
         {
-            if (word->revealed[i] == true)
-            {
-                printf("%c ", word->letters[i]);
-            }
-            else
-            {
-                printf("_ ");
-            }
+            printf("%c ", word->letters[i]);
         }
-        printf("\n");
+        else
+        {
+            printf("_ ");
+        }
+    }
+    printf("\n");
     return;
 }
 
-void WordSolved(Word *word)
+bool CheckWord(Word *word)
 {
-    printf("\nWord solved with %d!\nIt was %s\n\n", word->errors, word->word);
+    unsigned revealed_count = 0;
+    for (int i = 0; i < word->length; i++)
+    {
+        if (word->revealed[i])
+            revealed_count++;
+    }
+    return revealed_count >= word->length ? true : false;
+}
+
+void InputLetter(Word *word)
+{
+    char input[100] = "";
+    char letter = ' ';
+
+INPUT:
+    scanf("%s", &input);
+    fflush(stdin);
+    printf("\n");
+    letter = input[0];
+
+    switch (letter)
+    {
+    case ' ':
+        puts("Input failed!");
+        goto INPUT;
+        break;
+
+    case '1':
+        scanf("%s", &input);
+        fflush(stdin);
+
+        if (strncpy(word->word, input, WORD_LENGTH))
+        {
+            puts("testi1");
+            for (int i = 0; i <= word->length; i++)
+            {
+                word->revealed[i] = true;
+            }
+        }
+        break;
+
+    default:
+        break;
+    }
+    
+
+    bool right_answer = false;
+        for (int i = 0; i < word->length; i++)
+        {
+            if (letter == word->letters[i])
+            {
+                word->revealed[i] = true;
+                right_answer = true;
+            }
+        }
+
+        if (!right_answer)
+        {
+            word->errors++;
+        }
     return;
 }
 
 int main()
 {
     printf("HANGMAN Version 0.1\n\n");
-
-    
 
     // READ FILE: WORD-LIST
     FILE *word_list;
@@ -61,104 +118,50 @@ int main()
         return 0;
     }
 
-    // printf("%s", word_list_content);
+    printf("%s", word_list_content);
 
+    //INITIALIZE WORD
     Word *word1;
     word1 = (Word *)malloc(WORD_COUNT * sizeof(Word));
-
-    word1->length = 0;
+   
+    strncpy(word1->word, word_list_content, 6);
+ 
     word1->letters = (char *)malloc(WORD_LENGTH * sizeof(char));
-    word1->revealed = (bool *)malloc(WORD_LENGTH * sizeof(bool));
-    word1->errors = 0;
-
-    strncpy(word1->word, word_list_content, WORD_LENGTH);
-
+    word1->length = 0;
     for (int i = 0; i <= sizeof(word1->word); i++)
     {
         word1->letters[i] = word1->word[i];
         word1->length++;
     }
-
+    
+    word1->revealed = (bool *)malloc(WORD_LENGTH * sizeof(bool));
+    puts("test");
+    // CRASH HERE
     for (int i = 0; i <= word1->length; i++)
         word1->revealed[i] = false;
 
-    char letter;
-    bool right_answer = false;
 
-    while (1)
+    word1->errors = 0;
+
+
+    printf("%d", word1->length);
+
+    //WORD LOOP
+    do
     {
-        // CHECK WHOLE WORD
-        unsigned revealed_count = 0;
-        for (int i = 0; i < word1->length; i++)
-        {
-            if (word1->revealed[i])
-                revealed_count++;
-        }
-        if (revealed_count >= word1->length)
-        {
-            WordSolved(word1);
-            break;
-        }
 
-
-        // PRINT WORD
         printf("Errors: %d\n", word1->errors);
         PrintWord(word1);
 
-        
+        InputLetter(word1);
 
-        // LETTER INPUT AND CHECK
-        char input[100] = "";
-        letter = ' ';
-
-    INPUT:
-        scanf("%s", &input);
-        fflush(stdin);
-        printf("\n");
-        letter = input[0];
-
-        switch (letter)
+        if (CheckWord(word1))
         {
-        case ' ':
-            puts("Input failed!");
-            goto INPUT;
-            break;
-
-        case '1':
-            scanf("%s", &input);
-            fflush(stdin);
-
-            if (strncpy(word1->word, input, WORD_LENGTH))
-            {
-                puts("testi1");
-                for (int i = 0; i <= word1->length; i++)
-                {
-                    word1->revealed[i] = true;
-                }
-
-                continue;
-            }
-            break;
-
-        default:
+            printf("\nWord solved with %d Errors!\nIt was %s\n\n", word1->errors, word1->word);
             break;
         }
 
-        right_answer = false;
-        for (int i = 0; i < word1->length; i++)
-        {
-            if (letter == word1->letters[i])
-            {
-                word1->revealed[i] = true;
-                right_answer = true;
-            }
-        }
-
-        if (!right_answer)
-        {
-            word1->errors++;
-        }
-    }
+    } while (1);
 
     return 0;
 }
