@@ -11,11 +11,11 @@
 
 typedef struct Word
 {
-    char *word;
-    unsigned length;
-    char *letters;
-    bool *revealed;
     unsigned errors;
+    unsigned length;
+    char letters[50];
+    bool revealed[50];
+    
 } Word;
 
 void PrintWord(Word *word)
@@ -68,7 +68,7 @@ INPUT:
         scanf("%s", &input);
         fflush(stdin);
 
-        if (strncpy(word->word, input, WORD_LENGTH))
+        if (strncpy(word->letters, input, word->length))
         {
             puts("testi1");
             for (int i = 0; i <= word->length; i++)
@@ -81,22 +81,21 @@ INPUT:
     default:
         break;
     }
-    
 
     bool right_answer = false;
-        for (int i = 0; i < word->length; i++)
+    for (int i = 0; i < word->length; i++)
+    {
+        if (letter == word->letters[i])
         {
-            if (letter == word->letters[i])
-            {
-                word->revealed[i] = true;
-                right_answer = true;
-            }
+            word->revealed[i] = true;
+            right_answer = true;
         }
+    }
 
-        if (!right_answer)
-        {
-            word->errors++;
-        }
+    if (!right_answer)
+    {
+        word->errors++;
+    }
     return;
 }
 
@@ -120,33 +119,21 @@ int main()
 
     printf("%s", word_list_content);
 
-    //INITIALIZE WORD
+    // INITIALIZE WORD
     Word *word1;
     word1 = (Word *)malloc(WORD_COUNT * sizeof(Word));
-   
-    strncpy(word1->word, word_list_content, 6);
- 
-    word1->letters = (char *)malloc(WORD_LENGTH * sizeof(char));
-    word1->length = 0;
-    for (int i = 0; i <= sizeof(word1->word); i++)
-    {
-        word1->letters[i] = word1->word[i];
-        word1->length++;
-    }
-    
-    word1->revealed = (bool *)malloc(WORD_LENGTH * sizeof(bool));
-    puts("test");
-    // CRASH HERE
+    word1->length = strlen(word_list_content);
+
+    strncpy(word1->letters, word_list_content, 6);
+
     for (int i = 0; i <= word1->length; i++)
         word1->revealed[i] = false;
 
-
     word1->errors = 0;
 
+    printf("%d\n", word1->length);
 
-    printf("%d", word1->length);
-
-    //WORD LOOP
+    // WORD LOOP
     do
     {
 
@@ -157,7 +144,7 @@ int main()
 
         if (CheckWord(word1))
         {
-            printf("\nWord solved with %d Errors!\nIt was %s\n\n", word1->errors, word1->word);
+            printf("\nWord solved with %d Errors!\nIt was %s\n\n", word1->errors, word1->letters);
             break;
         }
 
