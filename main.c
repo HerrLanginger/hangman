@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #define bool int
 #define false 0
@@ -8,14 +9,15 @@
 
 #define WORD_LENGTH 5
 #define WORD_COUNT 1
+#define MAX_WORD_SIZE 50
 
 typedef struct Word
 {
     unsigned errors;
     unsigned length;
-    char letters[50];
-    bool revealed[50];
-    
+    char letters[MAX_WORD_SIZE];
+    bool revealed[MAX_WORD_SIZE];
+
 } Word;
 
 void PrintWord(Word *word)
@@ -46,28 +48,26 @@ bool CheckWord(Word *word)
     return revealed_count >= word->length ? true : false;
 }
 
-void InputLetter(Word *word)
+void CheckLetter(Word *word, char input[MAX_WORD_SIZE], char check_mode[10])
 {
-    char input[100] = "";
-    char letter = ' ';
-
-INPUT:
-    scanf("%s", &input);
-    fflush(stdin);
-    printf("\n");
-    letter = input[0];
-
-    switch (letter)
+    if (check_mode == "letter_check")
     {
-    case ' ':
-        puts("Input failed!");
-        goto INPUT;
-        break;
+        bool right_answer = false;
+        for (int i = 0; i < word->length; i++)
+        {
+            if (tolower(input[0]) == word->letters[i] || toupper(input[0]) == word->letters[i])
+            {
+                word->revealed[i] = true;
+                right_answer = true;
+            }
+        }
 
-    case '1':
-        scanf("%s", &input);
-        fflush(stdin);
-
+        if (!right_answer)
+        {
+            word->errors++;
+        }
+    } else if (check_mode == "word_check")
+    {
         if (strncpy(word->letters, input, word->length))
         {
             puts("testi1");
@@ -76,25 +76,39 @@ INPUT:
                 word->revealed[i] = true;
             }
         }
-        break;
-
-    default:
-        break;
     }
 
-    bool right_answer = false;
-    for (int i = 0; i < word->length; i++)
-    {
-        if (letter == word->letters[i])
-        {
-            word->revealed[i] = true;
-            right_answer = true;
-        }
-    }
+    return;
+}
 
-    if (!right_answer)
+void InputLetter(Word *word)
+{
+    char input[MAX_WORD_SIZE] = "";
+    char letter = ' ';
+    int letter_ascii_code = 0;
+
+INPUT:
+    scanf("%s", &input);
+    letter_ascii_code = (int) input[0];
+    fflush(stdin);
+    printf("\n");
+
+    if (input[0] == ' ')
     {
-        word->errors++;
+        
+    } else if (input[0] == '1')
+    {
+        scanf("%s", &input);
+        fflush(stdin);
+
+        CheckLetter(word, input, "word_check");
+    } else if (input[0] >= 'a' && input[0] <= 'z' || input[0] >= 'A' && input[0] <= 'Z')
+    {
+        CheckLetter(word, input, "letter_check");
+    } else
+    {
+        puts("Input failed! Try again:");
+        goto INPUT;
     }
     return;
 }
