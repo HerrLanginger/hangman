@@ -10,9 +10,11 @@
 #define WORD_LENGTH 5
 #define WORD_COUNT 1
 #define MAX_WORD_SIZE 50
+#define MAX_WORD_LIST_ITEMS 100
 
 typedef struct Word
 {
+    unsigned difficulty;
     unsigned errors;
     unsigned length;
     char letters[MAX_WORD_SIZE];
@@ -50,9 +52,10 @@ bool CheckWord(Word *word)
 
 void CheckLetter(Word *word, char input[MAX_WORD_SIZE], char check_mode[10])
 {
+    bool right_answer = false;
     if (check_mode == "letter_check")
     {
-        bool right_answer = false;
+       
         for (int i = 0; i < word->length; i++)
         {
             if (tolower(input[0]) == word->letters[i] || toupper(input[0]) == word->letters[i])
@@ -66,7 +69,8 @@ void CheckLetter(Word *word, char input[MAX_WORD_SIZE], char check_mode[10])
         {
             word->errors++;
         }
-    } else if (check_mode == "word_check")
+    }
+    else if (check_mode == "word_check")
     {
         if (strncpy(word->letters, input, word->length))
         {
@@ -74,7 +78,13 @@ void CheckLetter(Word *word, char input[MAX_WORD_SIZE], char check_mode[10])
             for (int i = 0; i <= word->length; i++)
             {
                 word->revealed[i] = true;
+                right_answer = true;
             }
+        }
+
+        if (!right_answer)
+        {
+            word->errors++;
         }
     }
 
@@ -89,23 +99,25 @@ void InputLetter(Word *word)
 
 INPUT:
     scanf("%s", &input);
-    letter_ascii_code = (int) input[0];
+    letter_ascii_code = (int)input[0];
     fflush(stdin);
     printf("\n");
 
     if (input[0] == ' ')
     {
-        
-    } else if (input[0] == '1')
+    }
+    else if (input[0] == '1')
     {
         scanf("%s", &input);
         fflush(stdin);
 
         CheckLetter(word, input, "word_check");
-    } else if (input[0] >= 'a' && input[0] <= 'z' || input[0] >= 'A' && input[0] <= 'Z')
+    }
+    else if (input[0] >= 'a' && input[0] <= 'z' || input[0] >= 'A' && input[0] <= 'Z')
     {
         CheckLetter(word, input, "letter_check");
-    } else
+    }
+    else
     {
         puts("Input failed! Try again:");
         goto INPUT;
@@ -119,11 +131,19 @@ int main()
 
     // READ FILE: WORD-LIST
     FILE *word_list;
+    char word_list_lines[MAX_WORD_LIST_ITEMS] [MAX_WORD_SIZE];
+    int line = 0; 
+
     word_list = fopen("word_list1.txt", "r");
     char word_list_content[100];
     if (word_list != NULL)
     {
-        fgets(word_list_content, 100, word_list);
+        //fgets(word_list_content, 100, word_list);
+
+        while (!feof(word_list) && !ferror(word_list))
+            if(fgets(word_list_lines, MAX_WORD_LIST_ITEMS, word_list))
+                line++;
+
     }
     else
     {
@@ -131,7 +151,12 @@ int main()
         return 0;
     }
 
-    printf("%s", word_list_content);
+    fclose(word_list);
+
+    for (int i = 0; i < line; i++)
+        printf("%s", word_list_content[i]);
+
+    
 
     // INITIALIZE WORD
     Word *word1;
