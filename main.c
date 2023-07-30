@@ -55,7 +55,7 @@ void CheckLetter(Word *word, char input[MAX_WORD_SIZE], char check_mode[10])
     bool right_answer = false;
     if (check_mode == "letter_check")
     {
-       
+
         for (int i = 0; i < word->length; i++)
         {
             if (tolower(input[0]) == word->letters[i] || toupper(input[0]) == word->letters[i])
@@ -125,25 +125,39 @@ INPUT:
     return;
 }
 
+void GameLoop(Word *word)
+{
+
+}
+
+void IntializeWord(char *selected_word)
+{
+    
+}
+
 int main()
 {
     printf("HANGMAN Version 0.1\n\n");
 
     // READ FILE: WORD-LIST
     FILE *word_list;
-    char word_list_lines[MAX_WORD_LIST_ITEMS] [MAX_WORD_SIZE];
-    int line = 0; 
+    char word_list_items[MAX_WORD_LIST_ITEMS][MAX_WORD_SIZE];
+    char word_list_line[MAX_WORD_SIZE];
+    int line = 0;
 
     word_list = fopen("word_list1.txt", "r");
     char word_list_content[100];
     if (word_list != NULL)
     {
-        //fgets(word_list_content, 100, word_list);
+        // fgets(word_list_content, 100, word_list);
 
         while (!feof(word_list) && !ferror(word_list))
-            if(fgets(word_list_lines, MAX_WORD_LIST_ITEMS, word_list))
+            while (fgets(word_list_line, MAX_WORD_SIZE, word_list))
+            {
+                strncpy(word_list_items[line], word_list_line, MAX_WORD_SIZE);
                 line++;
-
+            }
+                
     }
     else
     {
@@ -154,16 +168,14 @@ int main()
     fclose(word_list);
 
     for (int i = 0; i < line; i++)
-        printf("%s", word_list_content[i]);
-
-    
+        printf("%s", word_list_items[i]);
 
     // INITIALIZE WORD
     Word *word1;
     word1 = (Word *)malloc(WORD_COUNT * sizeof(Word));
-    word1->length = strlen(word_list_content);
+    word1->length = strlen(word_list_items[0]) - 1;
 
-    strncpy(word1->letters, word_list_content, 6);
+    strncpy(word1->letters, word_list_items[0], MAX_WORD_SIZE);
 
     for (int i = 0; i <= word1->length; i++)
         word1->revealed[i] = false;
