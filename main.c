@@ -103,8 +103,9 @@ INPUT:
     fflush(stdin);
     printf("\n");
 
-    if (input[0] == ' ')
+    if (input[0] == '0')
     {
+        
     }
     else if (input[0] == '1')
     {
@@ -125,12 +126,42 @@ INPUT:
     return;
 }
 
-void GameLoop(Word *word)
+void GameLoop(char selected_word[MAX_WORD_SIZE])
 {
+    Word *word;
+    word = (Word *)malloc(WORD_COUNT * sizeof(Word));
+    word->length = strlen(selected_word) - 1;
+    puts(selected_word);
+    return;
+
+    strncpy(word->letters, selected_word, MAX_WORD_SIZE);
+
+    for (int i = 0; i <= word->length; i++)
+        word->revealed[i] = false;
+
+    word->errors = 0;
+
+    printf("%d\n", word->length);
+
+    do
+    {
+
+        printf("Errors: %d\n", word->errors);
+        PrintWord(word);
+
+        InputLetter(word);
+
+        if (CheckWord(word))
+        {
+            printf("\nWord solved with %d Errors!\nIt was %s\n\n", word->errors, word->letters);
+            break;
+        }
+
+    } while (1);
 
 }
 
-void IntializeWord(char *selected_word)
+void IntializeWord(Word *word, char selected_word[MAX_WORD_SIZE])
 {
     
 }
@@ -171,35 +202,10 @@ int main()
         printf("%s", word_list_items[i]);
 
     // INITIALIZE WORD
-    Word *word1;
-    word1 = (Word *)malloc(WORD_COUNT * sizeof(Word));
-    word1->length = strlen(word_list_items[0]) - 1;
-
-    strncpy(word1->letters, word_list_items[0], MAX_WORD_SIZE);
-
-    for (int i = 0; i <= word1->length; i++)
-        word1->revealed[i] = false;
-
-    word1->errors = 0;
-
-    printf("%d\n", word1->length);
+    
+    
 
     // WORD LOOP
-    do
-    {
-
-        printf("Errors: %d\n", word1->errors);
-        PrintWord(word1);
-
-        InputLetter(word1);
-
-        if (CheckWord(word1))
-        {
-            printf("\nWord solved with %d Errors!\nIt was %s\n\n", word1->errors, word1->letters);
-            break;
-        }
-
-    } while (1);
-
+    
     return 0;
 }
