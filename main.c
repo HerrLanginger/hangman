@@ -22,7 +22,6 @@ typedef struct Word
 
 } Word;
 
-
 void PrintWord(Word *word)
 {
     for (int i = 0; i < word->length; i++)
@@ -30,10 +29,12 @@ void PrintWord(Word *word)
         if (word->revealed[i] == true)
         {
             printf("%c", word->letters[i]);
-        } else if (word->letters[i] == '-')
+        }
+        else if (word->letters[i] == '-')
         {
             printf("-");
-        } else if ((int)word->letters[i] == 39)
+        }
+        else if ((int)word->letters[i] == 39)
         {
             putchar((char)39);
         }
@@ -140,7 +141,6 @@ void GameLoop(char selected_word[MAX_WORD_SIZE])
     word = (Word *)malloc(WORD_COUNT * sizeof(Word));
     word->length = strlen(selected_word) - 1;
     puts(selected_word);
-    
 
     strncpy(word->letters, selected_word, MAX_WORD_SIZE);
 
@@ -167,7 +167,6 @@ void GameLoop(char selected_word[MAX_WORD_SIZE])
         }
 
     } while (1);
-
 }
 
 int main(int argc, char **argv)
@@ -184,19 +183,13 @@ int main(int argc, char **argv)
     char word_list_content[100];
     if (word_list != NULL)
     {
-        // fgets(word_list_content, 100, word_list);
-
         while (!feof(word_list) && !ferror(word_list))
             while (fgets(word_list_line, MAX_WORD_SIZE, word_list))
             {
-                if (strncmp("\n", word_list_line, MAX_WORD_SIZE))
-                {
-                    return EXIT_FAILURE;
-                }
+
                 strncpy(word_list_items[line], word_list_line, MAX_WORD_SIZE);
                 line++;
             }
-                
     }
     else
     {
@@ -210,10 +203,10 @@ int main(int argc, char **argv)
         printf("%s", word_list_items[i]);
 
     // INITIALIZE WORD
-    
+
     GameLoop(word_list_items[3]);
 
     // WORD LOOP
-    
-    return 0;
+
+    return EXIT_SUCCESS;
 }
