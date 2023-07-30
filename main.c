@@ -22,18 +22,26 @@ typedef struct Word
 
 } Word;
 
+
 void PrintWord(Word *word)
 {
     for (int i = 0; i < word->length; i++)
     {
         if (word->revealed[i] == true)
         {
-            printf("%c ", word->letters[i]);
+            printf("%c", word->letters[i]);
+        } else if (word->letters[i] == '-')
+        {
+            printf("-");
+        } else if ((int)word->letters[i] == 39)
+        {
+            putchar((char)39);
         }
         else
         {
-            printf("_ ");
+            printf("_");
         }
+        printf(" ");
     }
     printf("\n");
     return;
@@ -91,7 +99,7 @@ void CheckLetter(Word *word, char input[MAX_WORD_SIZE], char check_mode[10])
     return;
 }
 
-void InputLetter(Word *word)
+char InputLetter(Word *word)
 {
     char input[MAX_WORD_SIZE] = "";
     char letter = ' ';
@@ -105,7 +113,7 @@ INPUT:
 
     if (input[0] == '0')
     {
-        
+        return 'S';
     }
     else if (input[0] == '1')
     {
@@ -123,7 +131,7 @@ INPUT:
         puts("Input failed! Try again:");
         goto INPUT;
     }
-    return;
+    return ' ';
 }
 
 void GameLoop(char selected_word[MAX_WORD_SIZE])
@@ -132,7 +140,7 @@ void GameLoop(char selected_word[MAX_WORD_SIZE])
     word = (Word *)malloc(WORD_COUNT * sizeof(Word));
     word->length = strlen(selected_word) - 1;
     puts(selected_word);
-    return;
+    
 
     strncpy(word->letters, selected_word, MAX_WORD_SIZE);
 
@@ -149,7 +157,8 @@ void GameLoop(char selected_word[MAX_WORD_SIZE])
         printf("Errors: %d\n", word->errors);
         PrintWord(word);
 
-        InputLetter(word);
+        if (InputLetter(word) == 'S')
+            return;
 
         if (CheckWord(word))
         {
@@ -161,12 +170,7 @@ void GameLoop(char selected_word[MAX_WORD_SIZE])
 
 }
 
-void IntializeWord(Word *word, char selected_word[MAX_WORD_SIZE])
-{
-    
-}
-
-int main()
+int main(int argc, char **argv)
 {
     printf("HANGMAN Version 0.1\n\n");
 
@@ -185,6 +189,10 @@ int main()
         while (!feof(word_list) && !ferror(word_list))
             while (fgets(word_list_line, MAX_WORD_SIZE, word_list))
             {
+                if (strncmp("\n", word_list_line, MAX_WORD_SIZE))
+                {
+                    return EXIT_FAILURE;
+                }
                 strncpy(word_list_items[line], word_list_line, MAX_WORD_SIZE);
                 line++;
             }
@@ -203,7 +211,7 @@ int main()
 
     // INITIALIZE WORD
     
-    
+    GameLoop(word_list_items[3]);
 
     // WORD LOOP
     
