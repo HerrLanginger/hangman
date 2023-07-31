@@ -12,7 +12,6 @@
 #define MAX_WORD_SIZE 50
 #define MAX_WORD_LIST_ITEMS 100
 
-
 typedef struct Word
 {
     unsigned difficulty;
@@ -30,14 +29,6 @@ void PrintWord(Word *word)
         if (word->revealed[i] == true)
         {
             printf("%c", word->letters[i]);
-        }
-        else if (word->letters[i] == '-')
-        {
-            printf("-");
-        }
-        else if ((int)word->letters[i] == 39)
-        {
-            putchar((char)39);
         }
         else
         {
@@ -138,23 +129,31 @@ INPUT:
 
 void GameLoop(char selected_word[MAX_WORD_SIZE])
 {
-    //puts("\n");
-    //puts(selected_word);
-    //printf("%s \n%d", selected_word, selected_word[13]);
+    // puts("\n");
+    // puts(selected_word);
+    // printf("%s \n%d", selected_word, selected_word[13]);
     for (int i = 0; i <= 20; i++)
     {
         printf("%d: %d\n", i, selected_word[i]);
     }
-    
+
     Word *word;
     word = (Word *)malloc(WORD_COUNT * sizeof(Word));
     word->length = strlen(selected_word);
-    
 
     strncpy(word->letters, selected_word, MAX_WORD_SIZE);
 
     for (int i = 0; i <= word->length; i++)
-        word->revealed[i] = false;
+    {
+        if (word->letters[i] == '-' || (int)word->letters[i] == 39)
+        {
+            word->revealed[i] = true;
+        }
+        else
+        {
+            word->revealed[i] = false;
+        }
+    }
 
     word->errors = 0;
 
