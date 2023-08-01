@@ -175,4 +175,6 @@ void GameLoop(char selected_word[MAX_WORD_SIZE])
         }
 
     } while (1);
+
+    free(word);
 }

@@ -14,53 +14,53 @@
 #define MAX_WORD_LIST_ITEMS 100
 
 #define RANDOM(min, max) \
-    ((rand() % (int)(((max) + 1) - (min))) + (min))
+      ((rand() % (int)(((max) + 1) - (min))) + (min))
 
-void ReadWordListFile(char* word_list_items[MAX_WORD_LIST_ITEMS][MAX_WORD_SIZE], unsigned* line)
+void ReadWordListFile(char *word_list_items[MAX_WORD_LIST_ITEMS][MAX_WORD_SIZE], unsigned *word_list_items_count)
 {
-    FILE *word_list;
-    char word_list_line[MAX_WORD_SIZE];
+      FILE *word_list;
+      char word_list_line[MAX_WORD_SIZE];
+      unsigned line = 0;
 
-    word_list = fopen("word_list1.txt", "r");
-    char word_list_content[100];
-    if (word_list != NULL)
-    {
-        while (!feof(word_list) && !ferror(word_list))
-            while (fgets(word_list_line, MAX_WORD_SIZE, word_list))
-            {
-                word_list_line[strcspn(word_list_line, "\n")] = 0;
-                strncpy(word_list_items[*line], word_list_line, MAX_WORD_SIZE);
-                line++;
-            }
-    }
-    else
-    {
-        printf("Opening files failed!");
-        return;
-    }
+      word_list = fopen("word_list1.txt", "r");
+      if (word_list != NULL)
+      {
+            while (!feof(word_list) && !ferror(word_list))
+                  while (fgets(word_list_line, MAX_WORD_SIZE, word_list))
+                  {
+                        word_list_line[strcspn(word_list_line, "\n")] = 0;
+                        strncpy(&word_list_items[line], word_list_line, MAX_WORD_SIZE);
+                        line++;
+                  }
+      }
+      else
+      {
+            printf("Opening files failed!");
+            return;
+      }
 
-    fclose(word_list);
+      fclose(word_list);
 
-    for (int i = 0; i < line; i++)
-        printf("%s", word_list_items[i]);
-    
-    return;
+      for (int i = 0; i < line; i++)
+            printf("%s", word_list_items[i]);
+
+      word_list_items_count = line;
+      return;
 }
 
 int main(int argc, char **argv)
 {
-    time_t t1;
-    srand((unsigned)time(&t1));
+      time_t t1;
+      srand((unsigned)time(&t1));
 
-    printf("HANGMAN Version 0.1\n\n");
+      printf("HANGMAN Version 0.1\n\n");
 
-    
-    char word_list_items[MAX_WORD_LIST_ITEMS][MAX_WORD_SIZE];
-    unsigned word_list_item_count = 0;
+      unsigned word_list_items_count = 0;
+      char word_list_items[MAX_WORD_LIST_ITEMS][MAX_WORD_SIZE];
 
-    ReadWordListFile(&word_list_items, &word_list_item_count);
+      ReadWordListFile(&word_list_items, &word_list_items_count);
 
-    GameLoop(word_list_items[RANDOM(0, (word_list_item_count - 1))]);
+      GameLoop(word_list_items[RANDOM(0, (word_list_items_count - 1))]);
 
-    return EXIT_SUCCESS;
+      return EXIT_SUCCESS;
 }
