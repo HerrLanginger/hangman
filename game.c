@@ -12,12 +12,34 @@
 #define MAX_WORD_SIZE 50
 #define MAX_WORD_LIST_ITEMS 100
 
+typedef struct node
+{
+    char data;
+    struct node *next;
+} node_t;
+
+struct node *head = NULL;
+struct node *current = NULL;
+
+void InsertAtEnd(char data)
+{
+    struct node *lk = (struct node*) malloc(sizeof(struct node));
+    lk->data = data;
+    struct node *linkedlist = head;
+
+    while (linkedlist->next != NULL)
+        linkedlist = linkedlist->next;
+
+    linkedlist->next = lk;
+}
+
 typedef struct Word
 {
     unsigned difficulty;
     unsigned errors;
     unsigned length;
     char letters[MAX_WORD_SIZE];
+    char wrong_letters[100];
     bool revealed[MAX_WORD_SIZE];
 
 } Word;
@@ -63,6 +85,9 @@ void CheckLetter(Word *word, char input[MAX_WORD_SIZE], char check_mode[10])
             {
                 word->revealed[i] = true;
                 right_answer = true;
+            }
+            else
+            {
             }
         }
 
