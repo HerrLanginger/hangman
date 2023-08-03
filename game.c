@@ -14,192 +14,215 @@
 
 typedef struct node
 {
-    char data;
-    struct node *next;
+      char val;
+      struct node *next;
 } node_t;
 
-struct node *head = NULL;
-struct node *current = NULL;
-
-void InsertAtEnd(char data)
+void print_list(node_t *head)
 {
-    struct node *lk = (struct node*) malloc(sizeof(struct node));
-    lk->data = data;
-    struct node *linkedlist = head;
+      node_t *current = head;
 
-    while (linkedlist->next != NULL)
-        linkedlist = linkedlist->next;
+      while (current != NULL)
+      {
+            printf("%c", current->val);
+            current = current->next;
+      }
+}
 
-    linkedlist->next = lk;
+void push(node_t *head, char val)
+{
+      node_t *current = head;
+      
+      while (current->next != NULL)
+      {
+            current = current->next;
+      }
+
+      current->next = (node_t *)malloc(sizeof(node_t));
+      current->next->val = val;
+      current->next->next = NULL;
 }
 
 typedef struct Word
 {
-    unsigned difficulty;
-    unsigned errors;
-    unsigned length;
-    char letters[MAX_WORD_SIZE];
-    char wrong_letters[100];
-    bool revealed[MAX_WORD_SIZE];
+      unsigned difficulty;
+      unsigned errors;
+      unsigned length;
+      char letters[MAX_WORD_SIZE];
+      char wrong_letters[100];
+      bool revealed[MAX_WORD_SIZE];
 
 } Word;
 
 void PrintWord(Word *word)
 {
-    for (int i = 0; i < word->length; i++)
-    {
-        if (word->revealed[i] == true)
-        {
-            printf("%c", word->letters[i]);
-        }
-        else
-        {
-            printf("_");
-        }
-        printf(" ");
-    }
-    printf("\n");
-    return;
+      for (int i = 0; i < word->length; i++)
+      {
+            if (word->revealed[i] == true)
+            {
+                  printf("%c", word->letters[i]);
+            }
+            else
+            {
+                  printf("_");
+            }
+            printf(" ");
+      }
+      printf("\n");
+      return;
 }
 
 bool CheckWord(Word *word)
 {
-    unsigned revealed_count = 0;
-    for (int i = 0; i < word->length; i++)
-    {
-        if (word->revealed[i])
-            revealed_count++;
-    }
-    return revealed_count >= word->length ? true : false;
+      unsigned revealed_count = 0;
+      for (int i = 0; i < word->length; i++)
+      {
+            if (word->revealed[i])
+                  revealed_count++;
+      }
+      return revealed_count >= word->length ? true : false;
 }
 
 void CheckLetter(Word *word, char input[MAX_WORD_SIZE], char check_mode[10])
 {
-    bool right_answer = false;
-    if (check_mode == "letter_check")
-    {
+      bool right_answer = false;
+      if (check_mode == "letter_check")
+      {
 
-        for (int i = 0; i < word->length; i++)
-        {
-            if (tolower(input[0]) == word->letters[i] || toupper(input[0]) == word->letters[i])
+            for (int i = 0; i < word->length; i++)
             {
-                word->revealed[i] = true;
-                right_answer = true;
+                  if (tolower(input[0]) == word->letters[i] || toupper(input[0]) == word->letters[i])
+                  {
+                        word->revealed[i] = true;
+                        right_answer = true;
+                  }
+                  else
+                  {
+                        //linked list with error chars
+                  }
             }
-            else
+
+            if (!right_answer)
             {
+                  word->errors++;
             }
-        }
-
-        if (!right_answer)
-        {
-            word->errors++;
-        }
-    }
-    else if (check_mode == "word_check")
-    {
-        if (strncpy(word->letters, input, word->length))
-        {
-            puts("testi1");
-            for (int i = 0; i <= word->length; i++)
+      }
+      else if (check_mode == "word_check")
+      {
+            if (strncpy(word->letters, input, word->length))
             {
-                word->revealed[i] = true;
-                right_answer = true;
+                  puts("testi1");
+                  for (int i = 0; i <= word->length; i++)
+                  {
+                        word->revealed[i] = true;
+                        right_answer = true;
+                  }
             }
-        }
 
-        if (!right_answer)
-        {
-            word->errors++;
-        }
-    }
+            if (!right_answer)
+            {
+                  word->errors++;
+            }
+      }
 
-    return;
+      return;
 }
 
 char InputLetter(Word *word)
 {
-    char input[MAX_WORD_SIZE] = "";
-    char letter = ' ';
-    int letter_ascii_code = 0;
+      char input[MAX_WORD_SIZE] = "";
+      char letter = ' ';
+      int letter_ascii_code = 0;
 
 INPUT:
-    scanf("%s", &input);
-    letter_ascii_code = (int)input[0];
-    fflush(stdin);
-    printf("\n");
+      scanf("%s", &input);
+      letter_ascii_code = (int)input[0];
+      fflush(stdin);
+      printf("\n");
 
-    if (input[0] == '0')
-    {
-        return 'S';
-    }
-    else if (input[0] == '1')
-    {
-        scanf("%s", &input);
-        fflush(stdin);
+      if (input[0] == '0')
+      {
+            return 'S';
+      }
+      else if (input[0] == '1')
+      {
+            scanf("%s", &input);
+            fflush(stdin);
 
-        CheckLetter(word, input, "word_check");
-    }
-    else if (input[0] >= 'a' && input[0] <= 'z' || input[0] >= 'A' && input[0] <= 'Z')
-    {
-        CheckLetter(word, input, "letter_check");
-    }
-    else
-    {
-        puts("Input failed! Try again:");
-        goto INPUT;
-    }
-    return ' ';
+            CheckLetter(word, input, "word_check");
+      }
+      else if (input[0] >= 'a' && input[0] <= 'z' || input[0] >= 'A' && input[0] <= 'Z')
+      {
+            CheckLetter(word, input, "letter_check");
+      }
+      else
+      {
+            puts("Input failed! Try again:");
+            goto INPUT;
+      }
+      return ' ';
 }
 
 void GameLoop(char selected_word[MAX_WORD_SIZE])
 {
-    // puts("\n");
-    // puts(selected_word);
-    // printf("%s \n%d", selected_word, selected_word[13]);
-    for (int i = 0; i <= 20; i++)
-    {
-        printf("%d: %d\n", i, selected_word[i]);
-    }
 
-    Word *word;
-    word = (Word *)malloc(WORD_COUNT * sizeof(Word));
-    word->length = strlen(selected_word);
-
-    strncpy(word->letters, selected_word, MAX_WORD_SIZE);
-
-    for (int i = 0; i <= word->length; i++)
-    {
-        if (word->letters[i] == '-' || (int)word->letters[i] == 39)
-        {
-            word->revealed[i] = true;
-        }
-        else
-        {
-            word->revealed[i] = false;
-        }
-    }
-
-    word->errors = 0;
-
-    printf("\nLength:%d\n", word->length);
-
-    do
-    {
-
-        printf("Errors: %d\n", word->errors);
-        PrintWord(word);
-
-        if (InputLetter(word) == 'S')
+      node_t *head = NULL;
+      head = (node_t *)malloc(sizeof(node_t));
+      if (head == NULL)
             return;
 
-        if (CheckWord(word))
-        {
-            printf("\nWord solved with %d Errors!\nIt was %s\n\n", word->errors, word->letters);
-            break;
-        }
+      head->next = NULL;
+     
+      push(head, 'c');
 
-    } while (1);
+      print_list(head);
 
-    free(word);
+      // puts("\n");
+      // puts(selected_word);
+      // printf("%s \n%d", selected_word, selected_word[13]);
+      for (int i = 0; i <= 20; i++)
+      {
+            printf("%d: %d\n", i, selected_word[i]);
+      }
+
+      Word *word;
+      word = (Word *)malloc(WORD_COUNT * sizeof(Word));
+      word->length = strlen(selected_word);
+
+      strncpy(word->letters, selected_word, MAX_WORD_SIZE);
+
+      for (int i = 0; i <= word->length; i++)
+      {
+            if (word->letters[i] == '-' || (int)word->letters[i] == 39)
+            {
+                  word->revealed[i] = true;
+            }
+            else
+            {
+                  word->revealed[i] = false;
+            }
+      }
+
+      word->errors = 0;
+
+      printf("\nLength:%d\n", word->length);
+
+      do
+      {
+
+            printf("Errors: %d\n", word->errors);
+            PrintWord(word);
+
+            if (InputLetter(word) == 'S')
+                  return;
+
+            if (CheckWord(word))
+            {
+                  printf("\nWord solved with %d errors!\nIt was %s\n\n", word->errors, word->letters);
+                  break;
+            }
+
+      } while (1);
+
+      free(word);
 }

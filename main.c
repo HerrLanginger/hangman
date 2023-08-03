@@ -16,12 +16,6 @@
 #define RANDOM(min, max) \
       ((rand() % (int)(((max) + 1) - (min))) + (min))
 
-void ReadWordListFile(char *word_list_items[MAX_WORD_LIST_ITEMS][MAX_WORD_SIZE], unsigned *word_list_items_count)
-{
-      
-      return;
-}
-
 int main(int argc, char **argv)
 {
       time_t t1;
@@ -58,6 +52,8 @@ int main(int argc, char **argv)
       for (int i = 0; i < line; i++)
             printf("%s", word_list_items[i]);
 
+      puts("\n");
+      
       word_list_items_count = line;
 
       GameLoop(word_list_items[RANDOM(0, (word_list_items_count - 1))]);
