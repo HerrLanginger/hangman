@@ -32,7 +32,7 @@ void print_list(node_t *head)
 void push(node_t *head, char val)
 {
       node_t *current = head;
-      
+
       while (current->next != NULL)
       {
             current = current->next;
@@ -69,10 +69,9 @@ void PrintWord(Word *word)
             printf(" ");
       }
       printf("\n");
-      return;
 }
 
-bool CheckWord(Word *word)
+bool SolveWord(Word *word)
 {
       unsigned revealed_count = 0;
       for (int i = 0; i < word->length; i++)
@@ -83,49 +82,46 @@ bool CheckWord(Word *word)
       return revealed_count >= word->length ? true : false;
 }
 
-void CheckLetter(Word *word, char input[MAX_WORD_SIZE], char check_mode[10])
+void CheckWord(Word *word, char input[MAX_WORD_SIZE])
 {
       bool right_answer = false;
-      if (check_mode == "letter_check")
+      if (strncpy(word->letters, input, word->length))
       {
-
-            for (int i = 0; i < word->length; i++)
+            puts("testi1");
+            for (int i = 0; i <= word->length; i++)
             {
-                  if (tolower(input[0]) == word->letters[i] || toupper(input[0]) == word->letters[i])
-                  {
-                        word->revealed[i] = true;
-                        right_answer = true;
-                  }
-                  else
-                  {
-                        //linked list with error chars
-                  }
-            }
-
-            if (!right_answer)
-            {
-                  word->errors++;
-            }
-      }
-      else if (check_mode == "word_check")
-      {
-            if (strncpy(word->letters, input, word->length))
-            {
-                  puts("testi1");
-                  for (int i = 0; i <= word->length; i++)
-                  {
-                        word->revealed[i] = true;
-                        right_answer = true;
-                  }
-            }
-
-            if (!right_answer)
-            {
-                  word->errors++;
+                  word->revealed[i] = true;
+                  right_answer = true;
             }
       }
 
-      return;
+      if (!right_answer)
+      {
+            word->errors++;
+      }
+}
+
+void CheckLetter(Word *word, char input[MAX_WORD_SIZE])
+{
+      bool right_answer = false;
+
+      for (int i = 0; i < word->length; i++)
+      {
+            if (tolower(input[0]) == word->letters[i] || toupper(input[0]) == word->letters[i])
+            {
+                  word->revealed[i] = true;
+                  right_answer = true;
+            }
+            else
+            {
+                  // linked list with error chars
+            }
+      }
+
+      if (!right_answer)
+      {
+            word->errors++;
+      }
 }
 
 char InputLetter(Word *word)
@@ -149,11 +145,11 @@ INPUT:
             scanf("%s", &input);
             fflush(stdin);
 
-            CheckLetter(word, input, "word_check");
+            CheckWord(word, input);
       }
       else if (input[0] >= 'a' && input[0] <= 'z' || input[0] >= 'A' && input[0] <= 'Z')
       {
-            CheckLetter(word, input, "letter_check");
+            CheckLetter(word, input);
       }
       else
       {
@@ -165,25 +161,18 @@ INPUT:
 
 void GameLoop(char selected_word[MAX_WORD_SIZE])
 {
-
+      // linked list test
       node_t *head = NULL;
       head = (node_t *)malloc(sizeof(node_t));
       if (head == NULL)
             return;
 
       head->next = NULL;
-     
+
       push(head, 'c');
 
       print_list(head);
-
-      // puts("\n");
-      // puts(selected_word);
-      // printf("%s \n%d", selected_word, selected_word[13]);
-      for (int i = 0; i <= 20; i++)
-      {
-            printf("%d: %d\n", i, selected_word[i]);
-      }
+      //
 
       Word *word;
       word = (Word *)malloc(WORD_COUNT * sizeof(Word));
@@ -216,7 +205,7 @@ void GameLoop(char selected_word[MAX_WORD_SIZE])
             if (InputLetter(word) == 'S')
                   return;
 
-            if (CheckWord(word))
+            if (SolveWord(word))
             {
                   printf("\nWord solved with %d errors!\nIt was %s\n\n", word->errors, word->letters);
                   break;

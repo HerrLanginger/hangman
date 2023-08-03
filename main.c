@@ -16,19 +16,29 @@
 #define RANDOM(min, max) \
       ((rand() % (int)(((max) + 1) - (min))) + (min))
 
-int main(int argc, char **argv)
+unsigned CountFileLines(FILE *file)
 {
-      time_t t1;
-      srand((unsigned)time(&t1));
+      unsigned line_count = 0;
+      char c;
+      for (c = getc(file); c != EOF; c = getc(file))
+        if (c == '\n') // Increment count if this character is newline
+            line_count++;
+      
+      return line_count;
+}
 
-      printf("HANGMAN Version 0.1\n\n");
-
+char* ReadWordListFile()
+{
       unsigned word_list_items_count = 0;
-      char word_list_items[MAX_WORD_LIST_ITEMS][MAX_WORD_SIZE];
+     
 
       FILE *word_list;
       char word_list_line[MAX_WORD_SIZE];
       unsigned line = 0;
+      
+      printf("Lines%d", CountFileLines(word_list));
+      
+      char *words = (char*)malloc(sizeof(char) * MAX_WORD_SIZE * CountFileLines(word_list));
 
       word_list = fopen("word_list1.txt", "r");
       if (word_list != NULL)
@@ -37,26 +47,38 @@ int main(int argc, char **argv)
                   while (fgets(word_list_line, MAX_WORD_SIZE, word_list))
                   {
                         word_list_line[strcspn(word_list_line, "\n")] = 0;
-                        strncpy(word_list_items[line], word_list_line, MAX_WORD_SIZE);
+                        strncpy(words[line], word_list_line, MAX_WORD_SIZE);
                         line++;
                   }
       }
       else
       {
             printf("Opening files failed!");
-            return EXIT_FAILURE;
       }
 
       fclose(word_list);
+      return words;
+}
 
-      for (int i = 0; i < line; i++)
-            printf("%s", word_list_items[i]);
+unsigned CountStringArray(char *array)
+{
+      char word[MAX_WORD_SIZE];
 
-      puts("\n");
-      
-      word_list_items_count = line;
+      return 0;
+}
 
-      GameLoop(word_list_items[RANDOM(0, (word_list_items_count - 1))]);
+int main(int argc, char **argv)
+{
+      time_t t1;
+      srand((unsigned)time(&t1));
+
+      printf("HANGMAN Version 0.1\n\n");
+
+      char *words[MAX_WORD_LIST_ITEMS] = ReadWordListFile();
+      puts(words[0]);
+      return 1;
+
+      GameLoop(words[RANDOM(0, (5 - 1))]);
 
       return EXIT_SUCCESS;
 }
