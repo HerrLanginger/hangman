@@ -159,7 +159,7 @@ INPUT:
       return ' ';
 }
 
-void GameLoop(char selected_word[MAX_WORD_SIZE])
+void GameLoop(char *selected_word)
 {
       // linked list test
       node_t *head = NULL;
@@ -173,6 +173,7 @@ void GameLoop(char selected_word[MAX_WORD_SIZE])
 
       print_list(head);
       //
+      return;
 
       Word *word;
       word = (Word *)malloc(WORD_COUNT * sizeof(Word));

@@ -27,7 +27,7 @@ unsigned CountFileLines(FILE *file)
       return line_count;
 }
 
-char* ReadWordListFile()
+char** ReadWordListFile()
 {
       unsigned word_list_items_count = 0;
      
@@ -38,7 +38,7 @@ char* ReadWordListFile()
       
       printf("Lines%d", CountFileLines(word_list));
       
-      char *words = (char*)malloc(sizeof(char) * MAX_WORD_SIZE * CountFileLines(word_list));
+      char **words = malloc(sizeof(char) * MAX_WORD_SIZE * CountFileLines(word_list));
 
       word_list = fopen("word_list1.txt", "r");
       if (word_list != NULL)
@@ -74,8 +74,8 @@ int main(int argc, char **argv)
 
       printf("HANGMAN Version 0.1\n\n");
 
-      char *words[MAX_WORD_LIST_ITEMS] = ReadWordListFile();
-      puts(words[0]);
+      char **words[MAX_WORD_LIST_ITEMS] = ReadWordListFile();
+      puts(*words[0]);
       return 1;
 
       GameLoop(words[RANDOM(0, (5 - 1))]);
