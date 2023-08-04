@@ -127,12 +127,10 @@ void CheckLetter(Word *word, char input[MAX_WORD_SIZE])
 char InputLetter(Word *word)
 {
       char input[MAX_WORD_SIZE] = "";
-      char letter = ' ';
-      int letter_ascii_code = 0;
+      
 
 INPUT:
-      scanf("%s", &input);
-      letter_ascii_code = (int)input[0];
+      scanf("%s", input);
       fflush(stdin);
       printf("\n");
 
@@ -142,12 +140,12 @@ INPUT:
       }
       else if (input[0] == '1')
       {
-            scanf("%s", &input);
+            scanf("%s", input);
             fflush(stdin);
 
             CheckWord(word, input);
       }
-      else if (input[0] >= 'a' && input[0] <= 'z' || input[0] >= 'A' && input[0] <= 'Z')
+      else if ((input[0] >= 'a' && input[0] <= 'z') || (input[0] >= 'A' && input[0] <= 'Z'))
       {
             CheckLetter(word, input);
       }
