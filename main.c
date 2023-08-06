@@ -16,50 +16,54 @@
 #define RANDOM(min, max) \
       ((rand() % (int)(((max) + 1) - (min))) + (min))
 
-unsigned CountFileLines(FILE *file)
+unsigned CountFileLines()
 {
-      unsigned line_count = 1;
-      char c;
-      for (c = getc(file); c != EOF; c = getc(file))
-        if (c == '\n')
-            line_count++;
-      puts("cfl1");
-      return line_count;
+      FILE *file = fopen("word_list1.txt", "r");
+
+      unsigned lines = 1;
+      char ch;
+      while (!feof(file))
+      {
+            ch = fgetc(file);
+            if (ch == '\n')
+            {
+                  lines++;
+            }
+      }
+      return lines;
 }
 
-char** ReadWordListFile()
+char **ReadWordListFile()
 {
-      //unsigned word_list_items_count = 0;
-     
       FILE *word_list;
       char word_list_line[MAX_WORD_SIZE];
       unsigned line = 0;
-      puts("cfl1");
+
       word_list = fopen("word_list1.txt", "r");
-       
-      printf("Lines%d", CountFileLines(word_list));
-    
+
       unsigned file_lines = CountFileLines(word_list);
-      char **words = malloc(file_lines * sizeof(char));
+      printf("%d", file_lines);
+      char **words = malloc(file_lines * sizeof *words);
+      if (!words)
+      {
+            return NULL;
+      }
       for (int i = 0; i < file_lines; i++)
       {
-            words[i] = (char *)malloc (file_lines * sizeof(char *));
+            words[i] = malloc(MAX_WORD_SIZE * sizeof *words[i]);
       }
-    
-      if (word_list != NULL)
-      {
-            while (!feof(word_list) && !ferror(word_list))
-                  while (fgets(word_list_line, MAX_WORD_SIZE, word_list))
-                  {
-                        word_list_line[strcspn(word_list_line, "\n")] = 0;
-                        strncpy(words[line], word_list_line, MAX_WORD_SIZE);
-                        line++;
-                        puts(word_list_line);
-                  }
-      }
-      else
+
+      if (word_list == NULL)
       {
             printf("Opening files failed!");
+            return NULL;
+      }
+
+      while (fgets(word_list_line, MAX_WORD_SIZE, word_list))
+      {
+            word_list_line[strcspn(word_list_line, "\n")] = 0;
+            strncpy(words[line], word_list_line, MAX_WORD_SIZE);
+            line++;
       }
 
       fclose(word_list);
@@ -68,7 +72,7 @@ char** ReadWordListFile()
 
 unsigned CountStringArray(char *array)
 {
-      //char word[MAX_WORD_SIZE];
+      // char word[MAX_WORD_SIZE];
 
       return 0;
 }
@@ -79,11 +83,10 @@ int main(int argc, char **argv)
       srand((unsigned)time(&t1));
 
       printf("HANGMAN Version 0.1\n\n");
-      
+
       char **words = ReadWordListFile();
       puts("test after RWLF");
       printf("%s", words[0]);
-      return 0;
 
       GameLoop(words[RANDOM(0, (5 - 1))]);
 
