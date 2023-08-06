@@ -140,7 +140,7 @@ void CheckWord(Word *word, char input[MAX_WORD_SIZE])
 {
       bool right_answer = false;
 
-      if (strncpy(word->letters, input, word->length))
+      if (strncmp(word->letters, input, MAX_WORD_SIZE))
       {
             for (int i = 0; i <= word->length; i++)
             {

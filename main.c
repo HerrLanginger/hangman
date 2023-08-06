@@ -69,7 +69,7 @@ int main(int argc, char **argv)
       char **words = ReadWordListFile();
       puts("RWLF passed");
       printf("first list item: %s\n", words[0]);
-      GameLoop(words[0]);
+      GameLoop(words[RANDOM(0, 4)]);
 
       return EXIT_SUCCESS;
 }
