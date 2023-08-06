@@ -16,6 +16,7 @@
 #define RANDOM(min, max) \
       ((rand() % (int)(((max) + 1) - (min))) + (min))
 
+
 char **ReadWordListFile()
 {
       FILE *word_list;

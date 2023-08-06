@@ -24,7 +24,7 @@ void PrintList(node_t *head)
 
       while (current != NULL)
       {
-            printf("%c", current->val);
+            printf("%c ", current->val);
             current = current->next;
       }
 }
@@ -43,12 +43,12 @@ void PushList(node_t *head, char val)
       current->next->next = NULL;
 }
 
-bool SearchList(node_t *head, char val)
+bool SearchList(node_t *head, const char val)
 {
       node_t *current = head;
       while (current != NULL)
       {
-            if (current->val == val)
+            if (tolower(val) == current->val || toupper(val) == current->val)
             {
                   return true;
             }
@@ -170,9 +170,9 @@ void CheckLetter(Word *word, char input[MAX_WORD_SIZE])
 
       if (!right_answer)
       {
-            word->errors++;
-            if (SearchList(word->wrong_letters, input[0]))
+            if (!SearchList(word->wrong_letters, input[0]))
             {
+                  word->errors++;
                   PushList(word->wrong_letters, input[0]);
             }
       }
@@ -199,6 +199,11 @@ INPUT:
       }
       else if ((input[0] >= 'a' && input[0] <= 'z') || (input[0] >= 'A' && input[0] <= 'Z'))
       {
+            if (SearchList(word->wrong_letters, input[0]))
+            {
+                  printf("Letter already entered! Try again:\n");
+                  goto INPUT;
+            }
             CheckLetter(word, input);
       }
       else
