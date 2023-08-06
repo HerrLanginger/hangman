@@ -18,7 +18,7 @@ typedef struct node
       struct node *next;
 } node_t;
 
-void print_list(node_t *head)
+void PrintList(node_t *head)
 {
       node_t *current = head;
 
@@ -29,7 +29,7 @@ void print_list(node_t *head)
       }
 }
 
-void push(node_t *head, char val)
+void PushList(node_t *head, char val)
 {
       node_t *current = head;
 
@@ -157,9 +157,10 @@ INPUT:
       return ' ';
 }
 
-void GameLoop(char *selected_word)
+void GameLoop(const char *selected_word)
 {
       // linked list test
+      
       node_t *head = NULL;
       head = (node_t *)malloc(sizeof(node_t));
       if (head == NULL)
@@ -167,11 +168,11 @@ void GameLoop(char *selected_word)
 
       head->next = NULL;
 
-      push(head, 'c');
+      //PushList(head, 'c');
 
-      print_list(head);
+      PrintList(head); 
       //
-      return;
+     
 
       Word *word;
       word = (Word *)malloc(WORD_COUNT * sizeof(Word));
