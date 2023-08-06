@@ -43,19 +43,73 @@ void PushList(node_t *head, char val)
       current->next->next = NULL;
 }
 
+bool SearchList(node_t *head, char val)
+{
+      node_t *current = head;
+      while (current != NULL)
+      {
+            if (current->val == val)
+            {
+                  return true;
+            }
+            current = current->next;
+      }
+      return false;
+}
+
 typedef struct Word
 {
       unsigned difficulty;
       unsigned errors;
       unsigned length;
       char letters[MAX_WORD_SIZE];
-      char wrong_letters[100];
+      node_t *wrong_letters;
       bool revealed[MAX_WORD_SIZE];
 
 } Word;
 
+struct Word *InitWord(const char *selected_word)
+{
+      Word *word;
+      word = (Word *)malloc(WORD_COUNT * sizeof(Word));
+      word->length = strlen(selected_word);
+
+      strncpy(word->letters, selected_word, MAX_WORD_SIZE);
+
+      for (int i = 0; i <= word->length; i++)
+      {
+            if (word->letters[i] == '-' || (int)word->letters[i] == 39)
+            {
+                  word->revealed[i] = true;
+            }
+            else
+            {
+                  word->revealed[i] = false;
+            }
+      }
+
+      word->errors = 0;
+
+      word->wrong_letters = NULL;
+      word->wrong_letters = (node_t *)malloc(sizeof(node_t));
+      if (word->wrong_letters == NULL)
+            return NULL;
+
+      word->wrong_letters->next = NULL;
+
+      printf("\nLength:%d\n", word->length);
+      return word;
+}
+
 void PrintWord(Word *word)
 {
+      if (word->errors > 0)
+      {
+            printf("%d Errors: ", word->errors);
+            PrintList(word->wrong_letters);
+            printf("\n");
+      }
+
       for (int i = 0; i < word->length; i++)
       {
             if (word->revealed[i] == true)
@@ -85,9 +139,9 @@ bool SolveWord(Word *word)
 void CheckWord(Word *word, char input[MAX_WORD_SIZE])
 {
       bool right_answer = false;
+
       if (strncpy(word->letters, input, word->length))
       {
-            puts("testi1");
             for (int i = 0; i <= word->length; i++)
             {
                   word->revealed[i] = true;
@@ -112,22 +166,21 @@ void CheckLetter(Word *word, char input[MAX_WORD_SIZE])
                   word->revealed[i] = true;
                   right_answer = true;
             }
-            else
-            {
-                  // linked list with error chars
-            }
       }
 
       if (!right_answer)
       {
             word->errors++;
+            if (SearchList(word->wrong_letters, input[0]))
+            {
+                  PushList(word->wrong_letters, input[0]);
+            }
       }
 }
 
 char InputLetter(Word *word)
 {
       char input[MAX_WORD_SIZE] = "";
-      
 
 INPUT:
       scanf("%s", input);
@@ -142,7 +195,6 @@ INPUT:
       {
             scanf("%s", input);
             fflush(stdin);
-
             CheckWord(word, input);
       }
       else if ((input[0] >= 'a' && input[0] <= 'z') || (input[0] >= 'A' && input[0] <= 'Z'))
@@ -159,47 +211,10 @@ INPUT:
 
 void GameLoop(const char *selected_word)
 {
-      // linked list test
-      
-      node_t *head = NULL;
-      head = (node_t *)malloc(sizeof(node_t));
-      if (head == NULL)
-            return;
-
-      head->next = NULL;
-
-      //PushList(head, 'c');
-
-      PrintList(head); 
-      //
-     
-
-      Word *word;
-      word = (Word *)malloc(WORD_COUNT * sizeof(Word));
-      word->length = strlen(selected_word);
-
-      strncpy(word->letters, selected_word, MAX_WORD_SIZE);
-
-      for (int i = 0; i <= word->length; i++)
-      {
-            if (word->letters[i] == '-' || (int)word->letters[i] == 39)
-            {
-                  word->revealed[i] = true;
-            }
-            else
-            {
-                  word->revealed[i] = false;
-            }
-      }
-
-      word->errors = 0;
-
-      printf("\nLength:%d\n", word->length);
+      Word *word = InitWord(selected_word);
 
       do
       {
-
-            printf("Errors: %d\n", word->errors);
             PrintWord(word);
 
             if (InputLetter(word) == 'S')
@@ -212,6 +227,4 @@ void GameLoop(const char *selected_word)
             }
 
       } while (1);
-
-      free(word);
 }
